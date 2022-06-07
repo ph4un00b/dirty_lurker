@@ -3,10 +3,10 @@ import { config, puppeteer } from "./deps.ts";
 
 config({ safe: true, export: true });
 
-const banda = "sainte+vie";
+const banda = "elvis+presley";
 // const td = new TextDecoder();
 // const dec = (b: Uint8Array) => td.decode(b);
-// const URL = "https://soundcloud.com/ste-vie-1";
+// const URL = "https://soundcloud.com/";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const rand = (minimum: number, maximum: number) =>
@@ -30,9 +30,8 @@ await page.setExtraHTTPHeaders({
 await page.setViewport({ width: 1280, height: 610 });
 
 await page.goto(`https://soundcloud.com/search?q=${banda}`, {
-  waitUntil: "networkidle2"
+  waitUntil: "networkidle2",
 });
-
 
 // accept cookies
 
@@ -47,7 +46,7 @@ await page.waitForSelector(".spotlight", { timeout: 2500 }).catch(
 console.log(page.url());
 
 await page.goto(page.url() + "/popular-tracks", {
-  waitUntil: "networkidle2"
+  waitUntil: "networkidle2",
 });
 
 await page.waitForSelector(".soundList__item", { timeout: 2500 }).catch(
@@ -85,7 +84,7 @@ const info = await page.$eval(
     return e.querySelector(".truncatedUserDescription__content")?.outerHTML;
   },
 );
-console.log("info?", info);
+// console.log("info?", info);
 // await sleep(50000);
 
 if (!info) {
@@ -94,12 +93,11 @@ if (!info) {
 }
 
 const info_html = await page.evaluate((el) => el.innerHTML, info);
-await info?.dispose?.();
-
+await info.dispose?.();
 // const value = await info?.evaluate((el) => el.innerHTML);
 
-console.log(info_html);
-Deno.writeTextFileSync(`info-${banda}.html`, info_html);
+// console.log(info_html);
+Deno.writeTextFileSync(`info-${banda}.html`, info.toString());
 
 await page.waitForSelector(".web-profiles", { timeout: 2500 }).catch(
   console.error,
@@ -141,7 +139,7 @@ await page.waitForSelector("input[name=username]", { visible: true }).catch(
 );
 
 const user = Deno.env.get("INSTAGRAM_USER");
-const pass = Deno.env.get("INSTAGRAM_PASS")
+const pass = Deno.env.get("INSTAGRAM_PASS");
 
 if (!user || !pass) {
   browser.close();
